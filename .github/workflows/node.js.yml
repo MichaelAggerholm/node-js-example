@@ -1,45 +1,60 @@
+# Navn kan defineres som man vil
 name: Node.js CI
 
+# Workflow køres ved push og pull_request fra main branch
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
+# De commands der køres under workflow
 jobs:
   build:
+    # Bygges på en ubuntu - seneste version
     runs-on: ubuntu-latest
 
+    # Strategy matrix vil sige at workflow test køres for alle definerede scenarier, herunder node version 18 og 20.
     strategy:
       matrix:
         node-version: [18.x, 20.x]
 
     steps:
+        # Dependencies, checkout gør eksempelvis at vi kan merge koden ind i main ved success.
       - uses: actions/checkout@v4
 
+      # Node.js miljø med version som er defineret under matrix.
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      # Installerer npm globalt på den opsatte ubuntu vm
       - name: Install latest npm
         run: npm install -g npm@latest
 
+      # Benytter npm til at installere alle dependencies fra package.json
       - name: Install dependencies
         run: npm install
 
+      # Et debug check som visuelt viser at express er fundet i package-lock.json - kan springes over
       - name: Check express in package-lock.json
         run: cat package-lock.json | grep express
 
+      # Endnu et debug-point som visuelt viser hvilke packages der er installeret - kan springes over
       - name: List installed packages
         run: npm list
 
+      # npm ci er ligesom nmp install, denne sørger dog for at node_modules fjernes helt inden,
+      # dette punkt er mest nødvendigt lokalt, da node_modules er ekskluderet fra git, altså ville npm install være nok.
       - name: Run npm ci
         run: npm ci --verbose
 
+      # Bygger npm projektet hvis det er tilgængeligt, smider fejl hvis ikke det lykkedes.
       - name: Build project
         run: npm run build --if-present
 
+      # Kører alle jest tests, smider fejl hvis ikke alle lykkedes.
       - name: Run tests
         run: npm test
