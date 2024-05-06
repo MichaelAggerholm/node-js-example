@@ -12,31 +12,30 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x] # Ensuring we are using the latest LTS version as per your updated requirements.
+        node-version: [20.x]  # Updated to use the latest Node.js version
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      # Ensuring that npm is up-to-date
       - name: Install latest npm
         run: npm install -g npm@latest
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Check express in package-lock.json
-        run: cat package-lock.json | grep express # See how express is defined
+        run: cat package-lock.json | grep express
 
       - name: List installed packages
         run: npm list
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
-      - name: Install dependencies with npm ci
+      - name: Run npm ci
         run: npm ci --verbose
 
       - name: Build project
