@@ -1,5 +1,5 @@
 # Brug et officielt Node base image
-FROM node:14
+FROM node:20
 
 # Sæt arbejdsdirectory i containeren
 WORKDIR /usr/src/app
