@@ -1,6 +1,3 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: Node.js CI
 
 on:
@@ -11,25 +8,39 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18.x]
-        # node-version: [14.x, 16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [18.x] # Ensuring we are using the latest LTS version as per your updated requirements.
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: cat package-lock.json | grep express # See how express is defined
-    - run: npm list # Check installed packages
-    - run: npm cache clean --force
-    - run: npm ci --verbose
-    - run: npm run build --if-present
-    - run: npm test
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Ensuring that npm is up-to-date
+      - name: Install latest npm
+        run: npm install -g npm@latest
+
+      - name: Check express in package-lock.json
+        run: cat package-lock.json | grep express # See how express is defined
+
+      - name: List installed packages
+        run: npm list
+
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Install dependencies with npm ci
+        run: npm ci --verbose
+
+      - name: Build project
+        run: npm run build --if-present
+
+      - name: Run tests
+        run: npm test
