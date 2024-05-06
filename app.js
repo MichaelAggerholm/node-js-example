@@ -6,7 +6,7 @@ function sum(a, b) {
 }
 
 app.get('/', (req, res) => {
-    res.send(sum(2,3));
+    res.send(sum(2,3).toString());
 });
 
 const PORT = process.env.PORT || 3000;
@@ -15,5 +15,4 @@ const server = app.listen(PORT, () => {
 });
 
 // Sender sum og server med til jest test.
-module.exports = sum;
-module.exports = server;
+module.exports = { sum, server };
