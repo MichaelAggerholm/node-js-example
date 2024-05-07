@@ -6,7 +6,7 @@ function sum(a, b) {
 }
 
 app.get('/', (req, res) => {
-    res.send(sum(2,3).toString());
+    res.send(sum(10,10).toString());
 });
 
 const PORT = process.env.PORT || 3000;
